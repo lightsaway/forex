@@ -4,7 +4,7 @@ import cats.effect._
 import cats.effect.concurrent.Ref
 import cats.syntax.functor._
 import forex.config._
-import forex.domain.Rate
+import forex.domain.{Currency, Rate}
 import fs2.Stream
 import org.http4s.server.blaze.BlazeServerBuilder
 import forex.syntax._
