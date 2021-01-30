@@ -42,5 +42,5 @@ class Module[F[_]: Concurrent: Timer](config: ApplicationConfig, client: Client[
 
   val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(http).orNotFound)
 
-  val cacheRefresher = ratesServiceHttp.getMany(Currency.combinations).flatMap{xs => xs.map(x => cache.update{ old => old + (x.pair-> x) } ).sequence}
+  val cacheRefresher: F[Unit] = ratesServiceHttp.getMany(Currency.combinations).flatMap{ xs => xs.map(x => cache.update{ old => old + (x.pair-> x) } ).sequence}.void
 }
