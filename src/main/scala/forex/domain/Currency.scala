@@ -25,5 +25,8 @@ object Currency extends Enum[Currency] {
 
   def fromString(s: String): Option[Currency] = values.find(_.value.toUpperCase == s.toUpperCase)
 
+  lazy val combinations: Set[Rate.Pair] = values.toList.combinations(2)
+    .map{ case f ::t :: Nil => List(Rate.Pair(f,t), Rate.Pair(t, f))
+    case _ => List.empty}.toList.flatten.toSet
 }
 
