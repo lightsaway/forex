@@ -5,6 +5,7 @@ import fs2.Stream
 
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
+import pureconfig.module.http4s._
 
 object Config {
 
