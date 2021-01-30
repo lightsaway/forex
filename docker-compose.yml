@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  web:
+    image: forex
+    environment:
+      ONE_FRAME_URL: http://oneframe:8080/
+    depends_on:
+      - oneframe
+  oneframe:
+    image: "paidyinc/one-frame"

@@ -5,7 +5,7 @@ version := "1.0.1"
 
 scalaVersion := "2.12.10"
 scalacOptions ++= Seq(
- "-deprecation",
+  "-deprecation",
   "-encoding",
   "UTF-8",
   "-feature",
@@ -47,8 +47,15 @@ libraryDependencies ++= Seq(
   Libraries.pureConfigHttp4s,
   Libraries.enumeratum,
   Libraries.logback,
-  Libraries.circeLiteral        % Test,
-  Libraries.scalaTest        % Test,
-  Libraries.scalaCheck       % Test,
-  Libraries.catsScalaCheck   % Test
+  Libraries.circeLiteral   % Test,
+  Libraries.scalaTest      % Test,
+  Libraries.scalaCheck     % Test,
+  Libraries.catsScalaCheck % Test
 )
+
+mainClass in Compile := Some("forex.Main")
+
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+version in Docker := "latest"
+dockerExposedUdpPorts += 8080
