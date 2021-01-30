@@ -17,13 +17,18 @@ import forex.services.rates.errors._
 
 import scala.collection.immutable.HashMap
 
-class OneFrameCache[F[_]: FlatMap : Clock](db: Ref[F, HashMap[Rate.Pair, Rate]]) extends Algebra[F] {
+class OneFrameCache[F[_]: FlatMap: Clock](db: Ref[F, HashMap[Rate.Pair, Rate]]) extends Algebra[F] {
 
-  override def get(pair: Rate.Pair): F[Error Either Rate] = Clock[F].realTime(TimeUnit.MILLISECONDS).flatMap{ now =>
-    db.get.map{cache => cache.get(pair)}.map{
-      case Some(x) if x.timestamp.value.toInstant.isAfter(Instant.ofEpochMilli(now).minus(5, ChronoUnit.MINUTES)) => x.asRight
-      case _ => OneFrameLookupFailed("Can't find exchange rate right now").asLeft
-    }
+  override def get(pair: Rate.Pair): F[Error Either Rate] = Clock[F].realTime(TimeUnit.MILLISECONDS).flatMap { now =>
+    db.get
+      .map { cache =>
+        cache.get(pair)
+      }
+      .map {
+        case Some(x) if x.timestamp.value.toInstant.isAfter(Instant.ofEpochMilli(now).minus(5, ChronoUnit.MINUTES)) =>
+          x.asRight
+        case _ => OneFrameLookupFailed("Can't find exchange rate right now").asLeft
+      }
   }
-  override def getMany(pairs: Set[Rate.Pair]): F[List[Rate]] = db.get.map{_.values.toList}
+  override def getMany(pairs: Set[Rate.Pair]): F[Error Either List[Rate]] = db.get.map { _.values.toList.asRight }
 }

@@ -21,12 +21,17 @@ object Currency extends Enum[Currency] {
   case object SGD extends Currency("SGD")
   case object USD extends Currency("USD")
 
-  implicit val show: Show[Currency] = Show.show {_.value}
+  implicit val show: Show[Currency] = Show.show { _.value }
 
   def fromString(s: String): Option[Currency] = values.find(_.value.toUpperCase == s.toUpperCase)
 
-  lazy val combinations: Set[Rate.Pair] = values.toList.combinations(2)
-    .map{ case f ::t :: Nil => List(Rate.Pair(f,t), Rate.Pair(t, f))
-    case _ => List.empty}.toList.flatten.toSet
+  lazy val combinations: Set[Rate.Pair] = values.toList
+    .combinations(2)
+    .map {
+      case f :: t :: Nil => List(Rate.Pair(f, t), Rate.Pair(t, f))
+      case _             => List.empty
+    }
+    .toList
+    .flatten
+    .toSet
 }
-

@@ -1,21 +1,23 @@
 package forex
 
 import cats.effect.concurrent.Ref
-import cats.effect.{Concurrent, Timer}
+import cats.effect.{ Concurrent, Timer }
 import forex.config.ApplicationConfig
-import forex.domain.{Currency, Rate}
+import forex.domain.{ Currency, Rate }
 import forex.http.rates.RatesHttpRoutes
 import forex.services._
 import forex.programs._
 import org.http4s._
 import org.http4s.client.Client
 import org.http4s.implicits._
-import org.http4s.server.middleware.{AutoSlash, Timeout}
+import org.http4s.server.middleware.{ AutoSlash, Timeout }
 import cats.implicits._
 
 import scala.collection.immutable.HashMap
 
-class Module[F[_]: Concurrent: Timer](config: ApplicationConfig, client: Client[F], cache : Ref[F, HashMap[Rate.Pair, Rate]]) {
+class Module[F[_]: Concurrent: Timer](config: ApplicationConfig,
+                                      client: Client[F],
+                                      cache: Ref[F, HashMap[Rate.Pair, Rate]]) {
 
   private val ratesService: RatesService[F] = RatesServices.cached[F](cache)
 
@@ -42,5 +44,17 @@ class Module[F[_]: Concurrent: Timer](config: ApplicationConfig, client: Client[
 
   val httpApp: HttpApp[F] = appMiddleware(routesMiddleware(http).orNotFound)
 
-  val cacheRefresher: F[Unit] = ratesServiceHttp.getMany(Currency.combinations).flatMap{ xs => xs.map(x => cache.update{ old => old + (x.pair-> x) } ).sequence}.void
+  val cacheRefresher: F[Unit] = ratesServiceHttp
+    .getMany(Currency.combinations)
+    .rethrow
+    .flatMap { xs =>
+      xs.map(
+          x =>
+            cache.update { old =>
+              old + (x.pair -> x)
+          }
+        )
+        .sequence
+    }
+    .void
 }

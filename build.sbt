@@ -34,7 +34,6 @@ libraryDependencies ++= Seq(
   compilerPlugin(Libraries.kindProjector),
   Libraries.cats,
   Libraries.catsEffect,
-  Libraries.fs2,
   Libraries.http4sDsl,
   Libraries.http4sServer,
   Libraries.http4sClient,
@@ -48,6 +47,7 @@ libraryDependencies ++= Seq(
   Libraries.pureConfigHttp4s,
   Libraries.enumeratum,
   Libraries.logback,
+  Libraries.circeLiteral        % Test,
   Libraries.scalaTest        % Test,
   Libraries.scalaCheck       % Test,
   Libraries.catsScalaCheck   % Test
