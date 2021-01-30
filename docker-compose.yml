@@ -6,5 +6,7 @@ services:
       ONE_FRAME_URL: http://oneframe:8080/
     depends_on:
       - oneframe
+    ports:
+      - 8080:8080
   oneframe:
     image: "paidyinc/one-frame"
